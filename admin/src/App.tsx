@@ -7,6 +7,7 @@ import {
   Collapse,
   Typography,
   IconButton,
+  Tooltip,
 } from "@mui/material";
 import {
   ExpandLess,
@@ -34,6 +35,15 @@ const App: React.FC = () => {
   const handleClick = () => {
     setOpen(!open);
   };
+
+  const renderListItem = (icon: React.ReactNode, text: string, onClick?: () => void) => (
+    <Tooltip title={text} placement="right" disableHoverListener={isExpanded}>
+      <ListItemButton onClick={onClick}>
+        <ListItemIcon>{icon}</ListItemIcon>
+        {isExpanded && <ListItemText primary={text} />}
+      </ListItemButton>
+    </Tooltip>
+  );
 
   return (
     <div className="h-screen">
@@ -66,37 +76,33 @@ const App: React.FC = () => {
           component="nav"
           aria-labelledby="nested-list-subheader"
         >
-          <ListItemButton>
-            <ListItemIcon>
-              <SendIcon />
-            </ListItemIcon>
-            {isExpanded && <ListItemText primary="Sent mail" />}
-          </ListItemButton>
-          <ListItemButton>
-            <ListItemIcon>
-              <DraftsIcon />
-            </ListItemIcon>
-            {isExpanded && <ListItemText primary="Drafts" />}
-          </ListItemButton>
-          <ListItemButton onClick={handleClick}>
-            <ListItemIcon>
-              <InboxIcon />
-            </ListItemIcon>
-            {isExpanded && <ListItemText primary="Inbox" />}
-            {isExpanded && (open ? <ExpandLess /> : <ExpandMore />)}
-          </ListItemButton>
-          {isExpanded && (
-            <Collapse in={open} timeout="auto" unmountOnExit>
-              <List component="div" disablePadding>
-                <ListItemButton sx={{ pl: 4 }}>
+          {renderListItem(<SendIcon />, "Sent mail")}
+          {renderListItem(<DraftsIcon />, "Drafts")}
+          <Tooltip title="Inbox" placement="right" disableHoverListener={isExpanded}>
+            <ListItemButton onClick={handleClick}>
+              <ListItemIcon>
+                <InboxIcon />
+              </ListItemIcon>
+              {isExpanded && (
+                <>
+                  <ListItemText primary="Inbox" />
+                  {open ? <ExpandLess /> : <ExpandMore />}
+                </>
+              )}
+            </ListItemButton>
+          </Tooltip>
+          <Collapse in={open} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              <Tooltip title="Starred" placement="right" disableHoverListener={isExpanded}>
+                <ListItemButton sx={{ pl: isExpanded ? 4 : 2 }}>
                   <ListItemIcon>
                     <StarBorder />
                   </ListItemIcon>
-                  <ListItemText primary="Starred" />
+                  {isExpanded && <ListItemText primary="Starred" />}
                 </ListItemButton>
-              </List>
-            </Collapse>
-          )}
+              </Tooltip>
+            </List>
+          </Collapse>
         </List>
         <div className="bg-slate-400 text-center items-center justify-center flex flex-1">
           Content
