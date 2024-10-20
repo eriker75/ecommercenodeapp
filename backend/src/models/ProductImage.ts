@@ -1,20 +1,33 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
-import { Product } from './Product';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from "typeorm";
+import { Product } from "./Product";
 
-@Entity('product_images')
+@Entity()
 export class ProductImage {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @ManyToOne(() => Product, (product) => product.images)
+  product: Product;
 
   @Column()
   url: string;
 
-  @Column()
-  alt_text: string;
+  @Column({ nullable: true })
+  alt: string;
 
   @Column({ default: false })
-  is_featured: boolean;
+  isMain: boolean;
 
-  @ManyToOne(() => Product, (product) => product.images)
-  product: Product;
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

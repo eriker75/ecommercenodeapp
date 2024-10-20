@@ -1,19 +1,27 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne } from 'typeorm';
-import { Product } from './Product';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  OneToMany,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from "typeorm";
+import { Product } from "./Product";
 
-@Entity('categories')
+@Entity()
 export class Category {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column()
   name: string;
 
-  @Column({ unique: true })
-  slug: string;
-
-  @Column('text')
+  @Column({ nullable: true })
   description: string;
+
+  @Column({ nullable: true })
+  image: string;
 
   @ManyToOne(() => Category, (category) => category.children)
   parent: Category;
@@ -24,6 +32,12 @@ export class Category {
   @OneToMany(() => Product, (product) => product.category)
   products: Product[];
 
-  @OneToMany(() => Promotion, (promotion) => promotion.category)
-  promotions: Promotion[]; // Promociones vinculadas a esta categoría
+  @Column({ default: 0 })
+  order: number;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

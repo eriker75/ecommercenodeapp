@@ -1,35 +1,52 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany } from 'typeorm';
-import { Product } from './Product';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToMany,
+  OneToMany,
+  JoinTable,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from "typeorm";
+import { Product } from "./Product";
+import { Order } from "./Order";
 
-@Entity('coupons')
+@Entity()
 export class Coupon {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-  @Column({ unique: true })
+  @Column()
   code: string;
 
-  @Column('decimal', { default: 0 })
-  discount_amount: number;
+  @Column("decimal", { precision: 5, scale: 2 })
+  discount: number;
 
-  @Column('decimal', { default: 0 })
-  discount_percentage: number;
+  @Column()
+  type: "percentage" | "fixed";
 
-  @Column({ type: 'decimal', nullable: true })
-  min_purchase_amount: number;
+  @Column({ nullable: true })
+  maxUses: number;
 
-  @Column({ type: 'timestamp', nullable: true })
-  expiration_date: Date;
+  @Column({ nullable: true })
+  usesCount: number;
 
-  @Column({ type: 'enum', enum: ['active', 'expired', 'used'], default: 'active' })
-  status: string;
+  @Column({ nullable: true })
+  expiryDate: Date;
+
+  @Column({ default: true })
+  isActive: boolean;
 
   @ManyToMany(() => Product)
-  applicable_products: Product[];
+  @JoinTable()
+  applicableProducts: Product[];
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  created_at: Date;
+  @OneToMany(() => Order, (order) => order.coupon)
+  orders: Order[];
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  updated_at: Date;
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

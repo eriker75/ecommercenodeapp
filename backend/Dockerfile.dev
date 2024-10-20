@@ -1,0 +1,20 @@
+# Utiliza la imagen base de Node.js en Alpine Linux
+FROM node:20
+
+# Establece el directorio de trabajo dentro del contenedor
+WORKDIR /usr/src/app
+
+# Copia los archivos de configuración de npm y los instala
+COPY package*.json ./
+RUN npm install
+
+# Copia el resto de los archivos del proyecto y ejecuta el proceso de construcción
+COPY . .
+
+# Asegura que el archivo runner.sh tenga permisos de ejecución
+RUN chmod +x /usr/src/app/runner.sh
+
+# Expone el puerto 3000
+EXPOSE 3000
+
+CMD ["/bin/sh", "/usr/src/app/runner.sh"]

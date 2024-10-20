@@ -1,0 +1,27 @@
+# Build Step
+FROM node:20 AS builder
+
+WORKDIR /usr/src/app
+
+COPY package*.json ./
+RUN npm ci
+
+COPY . .
+RUN npm run build
+
+# Production Step
+FROM node:20
+
+WORKDIR /usr/src/app
+
+COPY package*.json ./
+
+RUN npm ci --only=production
+
+COPY --from=builder /usr/src/app/dist ./dist
+
+RUN npm install -g pm2
+
+EXPOSE 3000
+
+CMD ["pm2-runtime", "dist/index.js"]

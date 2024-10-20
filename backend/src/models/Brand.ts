@@ -1,20 +1,33 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { Product } from './Product';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from "typeorm";
+import { Product } from "./Product";
 
-@Entity('brands')
+@Entity()
 export class Brand {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
-  @Column({ unique: true })
-  name: string;
-
-  @Column('text')
-  description: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column()
+  name: string;
+
+  @Column({ nullable: true })
+  description: string;
+
+  @Column({ nullable: true })
   logo: string;
 
   @OneToMany(() => Product, (product) => product.brand)
   products: Product[];
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

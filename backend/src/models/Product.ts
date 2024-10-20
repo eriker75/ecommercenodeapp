@@ -1,38 +1,33 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, ManyToMany, JoinTable } from 'typeorm';
-import { Category } from './Category';
-import { Brand } from './Brand';
-import { ProductImage } from './ProductImage';
-import { Promotion } from './Promotion';
-import { Tag } from './Tag';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  OneToMany,
+  ManyToMany,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from "typeorm";
+import { Category } from "./Category";
+import { Brand } from "./Brand";
+import { Inventory } from "./Inventory";
+import { ProductImage } from "./ProductImage";
+import { Reviews } from "./Reviews";
+import { Coupon } from "./Coupon";
 
-@Entity('products')
+@Entity()
 export class Product {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column()
   name: string;
 
-  @Column('text')
+  @Column("text")
   description: string;
 
-  @Column('decimal')
+  @Column("decimal", { precision: 10, scale: 2 })
   price: number;
-
-  @Column('int')
-  stock_quantity: number;
-
-  @Column({ unique: true })
-  sku: string;
-
-  @Column({ type: 'enum', enum: ['available', 'out_of_stock', 'discontinued'] })
-  status: string;
-
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  created_at: Date;
-
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  updated_at: Date;
 
   @ManyToOne(() => Category, (category) => category.products)
   category: Category;
@@ -40,13 +35,27 @@ export class Product {
   @ManyToOne(() => Brand, (brand) => brand.products)
   brand: Brand;
 
+  @OneToMany(() => Inventory, (inventory) => inventory.product)
+  inventory: Inventory[];
+
   @OneToMany(() => ProductImage, (productImage) => productImage.product)
   images: ProductImage[];
 
-  @ManyToMany(() => Promotion, (promotion) => promotion.products)
-  promotions: Promotion[];
+  @OneToMany(() => Reviews, (review) => review.product)
+  reviews: Reviews[];
 
-  @ManyToMany(() => Tag, (tag) => tag.products)
-  @JoinTable()
-  tags: Tag[];
+  @ManyToMany(() => Coupon, (coupon) => coupon.applicableProducts)
+  coupons: Coupon[];
+
+  @Column({ default: true })
+  isActive: boolean;
+
+  @Column({ type: "simple-array", nullable: true })
+  tags: string[];
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

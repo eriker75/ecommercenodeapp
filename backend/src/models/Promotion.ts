@@ -1,33 +1,47 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, ManyToOne } from 'typeorm';
-import { Product } from './Product';
-import { Category } from './Category';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToMany,
+  JoinTable,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from "typeorm";
+import { Product } from "./Product";
 
-@Entity('promotions')
+@Entity()
 export class Promotion {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column()
   name: string;
 
-  @Column('decimal', { nullable: true })
-  discount_amount: number;
+  @Column("text")
+  description: string;
 
-  @Column('decimal', { nullable: true })
-  discount_percentage: number;
+  @Column("decimal", { precision: 5, scale: 2 })
+  discountAmount: number;
 
-  @Column({ type: 'timestamp', nullable: true })
-  start_date: Date;
+  @Column()
+  discountType: "percentage" | "fixed";
 
-  @Column({ type: 'timestamp', nullable: true })
-  end_date: Date;
+  @Column()
+  startDate: Date;
 
-  @ManyToMany(() => Product, (product) => product.promotions)
+  @Column()
+  endDate: Date;
+
+  @ManyToMany(() => Product)
+  @JoinTable()
   products: Product[];
 
-  @ManyToOne(() => Category)
-  category: Category;
+  @Column({ default: true })
+  isActive: boolean;
 
-  @Column({ type: 'enum', enum: ['active', 'inactive'], default: 'active' })
-  status: string;
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

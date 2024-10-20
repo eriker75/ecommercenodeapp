@@ -1,12 +1,18 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
-import { Order } from './Order';
-import { Product } from './Product';
-import { Promotion } from './Promotion';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from "typeorm";
+import { Order } from "./Order";
+import { Product } from "./Product";
 
-@Entity('order_items')
+@Entity()
 export class OrderItem {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @ManyToOne(() => Order, (order) => order.items)
   order: Order;
@@ -14,12 +20,15 @@ export class OrderItem {
   @ManyToOne(() => Product)
   product: Product;
 
-  @Column('int')
+  @Column()
   quantity: number;
 
-  @Column('decimal')
+  @Column("decimal", { precision: 10, scale: 2 })
   price: number;
 
-  @ManyToOne(() => Promotion, { nullable: true })
-  promotion: Promotion;
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

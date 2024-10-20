@@ -1,13 +1,36 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToMany,
+  JoinTable,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from "typeorm";
+import { User } from "./User";
+import { Permission } from "./Permission";
 
-@Entity('roles')
+@Entity()
 export class Role {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
-  @Column({ unique: true })
-  name: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column()
+  name: string;
+
+  @Column({ nullable: true })
   description: string;
+
+  @ManyToMany(() => User, (user) => user.roles)
+  users: User[];
+
+  @ManyToMany(() => Permission, (permission) => permission.roles)
+  @JoinTable()
+  permissions: Permission[];
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

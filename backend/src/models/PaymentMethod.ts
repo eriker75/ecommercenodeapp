@@ -1,20 +1,39 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
-import { User } from './User';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from "typeorm";
+import { User } from "./User";
 
-@Entity('payment_methods')
+@Entity()
 export class PaymentMethod {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @ManyToOne(() => User, (user) => user.paymentMethods)
   user: User;
 
-  @Column({ type: 'enum', enum: ['credit_card', 'paypal'] })
+  @Column()
   type: string;
 
   @Column()
   provider: string;
 
-  @Column({ select: false })
-  account_number: string;
+  @Column({ nullable: true })
+  accountNumber: string;
+
+  @Column({ nullable: true })
+  expiryDate: Date;
+
+  @Column({ default: false })
+  isDefault: boolean;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

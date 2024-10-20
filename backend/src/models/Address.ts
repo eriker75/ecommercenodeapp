@@ -1,19 +1,22 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
-import { User } from './User';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  OneToMany,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from "typeorm";
+import { User } from "./User";
+import { Order } from "./Order";
 
-@Entity('addresses')
+@Entity()
 export class Address {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
-  @ManyToOne(() => User, (user) => user.addresses)
-  user: User;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column()
-  line_1: string;
-
-  @Column({ nullable: true })
-  line_2: string;
+  street: string;
 
   @Column()
   city: string;
@@ -22,8 +25,20 @@ export class Address {
   state: string;
 
   @Column()
-  postal_code: string;
+  country: string;
 
   @Column()
-  country: string;
+  zipCode: string;
+
+  @ManyToOne(() => User, (user) => user.addresses)
+  user: User;
+
+  @OneToMany(() => Order, (order) => order.shippingAddress)
+  orders: Order[];
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

@@ -1,112 +1,98 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import { Outlet } from "react-router-dom";
 import {
-  List,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Collapse,
-  Typography,
-  IconButton,
-  Tooltip,
-} from "@mui/material";
-import {
-  ExpandLess,
-  ExpandMore,
-  StarBorder,
-  Menu as MenuIcon,
-  MenuOpen as MenuOpenIcon,
-  MoveToInbox as InboxIcon,
-  Drafts as DraftsIcon,
-  Send as SendIcon,
+  DashboardOutlined,
+  ShoppingCartOutlined,
+  InventoryOutlined,
+  PeopleOutlined,
+  ReceiptOutlined,
+  SettingsOutlined,
+  LocalOfferOutlined,
+  CategoryOutlined,
+  ReviewsOutlined,
+  LocalShippingOutlined,
+  PaymentOutlined,
+  ExtensionOutlined,
 } from "@mui/icons-material";
 import HeaderMenu from "./components/HeaderMenu";
+import Sidebar from "./components/Sidebar";
 
 const App: React.FC = () => {
-  const height = 52;
-  const expandedWidth = 240;
-  const collapsedWidth = 65;
   const [isExpanded, setIsExpanded] = useState(true);
-  const [open, setOpen] = useState(true);
 
   const handleSidebarToggle = () => {
     setIsExpanded(!isExpanded);
   };
 
-  const handleClick = () => {
-    setOpen(!open);
-  };
-
-  const renderListItem = (icon: React.ReactNode, text: string, onClick?: () => void) => (
-    <Tooltip title={text} placement="right" disableHoverListener={isExpanded}>
-      <ListItemButton onClick={onClick}>
-        <ListItemIcon>{icon}</ListItemIcon>
-        {isExpanded && <ListItemText primary={text} />}
-      </ListItemButton>
-    </Tooltip>
-  );
+  const menuItems = [
+    { icon: <DashboardOutlined />, text: "Dashboard", link: "/dashboard" },
+    {
+      icon: <ShoppingCartOutlined />,
+      text: "Products",
+      link: "/products",
+      subItems: [
+        { icon: <InventoryOutlined />, text: "All Products", link: "/products/all" },
+        { icon: <LocalOfferOutlined />, text: "Add New", link: "/products/new" },
+        { icon: <CategoryOutlined />, text: "Categories", link: "/products/categories" },
+        { icon: <LocalOfferOutlined />, text: "Tags", link: "/products/tags" },
+        { icon: <ReviewsOutlined />, text: "Reviews", link: "/products/reviews" },
+      ],
+    },
+    {
+      icon: <ReceiptOutlined />,
+      text: "Orders",
+      link: "/orders",
+      subItems: [
+        { icon: <ReceiptOutlined />, text: "All Orders", link: "/orders/all" },
+        { icon: <LocalShippingOutlined />, text: "Shipments", link: "/orders/shipments" },
+        { icon: <PaymentOutlined />, text: "Refunds", link: "/orders/refunds" },
+      ],
+    },
+    { icon: <PeopleOutlined />, text: "Customers", link: "/customers" },
+    {
+      icon: <LocalOfferOutlined />,
+      text: "Marketing",
+      link: "/marketing",
+      subItems: [
+        { icon: <LocalOfferOutlined />, text: "Coupons", link: "/marketing/coupons" },
+        { icon: <LocalOfferOutlined />, text: "Promotions", link: "/marketing/promotions" },
+      ],
+    },
+    {
+      icon: <SettingsOutlined />,
+      text: "Settings",
+      link: "/settings",
+      subItems: [
+        { icon: <SettingsOutlined />, text: "General", link: "/settings/general" },
+        { icon: <PaymentOutlined />, text: "Payments", link: "/settings/payments" },
+        { icon: <LocalShippingOutlined />, text: "Shipping", link: "/settings/shipping" },
+        { icon: <ExtensionOutlined />, text: "Integrations", link: "/settings/integrations" },
+      ],
+    },
+  ];
 
   return (
-    <div className="h-screen">
-      <div style={{ height: `${height}px` }} className="flex items-center py-2">
-        <div className="flex items-center justify-between px-3" style={{ width: `${isExpanded ? expandedWidth : collapsedWidth}px`, transition: 'width 0.3s' }}>
-          <IconButton onClick={handleSidebarToggle}>
-            {isExpanded ? <MenuOpenIcon /> : <MenuIcon />}
-          </IconButton>
-          {isExpanded && (
-            <div className="flex items-center">
-              <img src="https://mui.com/static/logo.png" alt="logo" width={32} />
-              <Typography variant="h6" component="h1" className="ml-2">
-                MuiDashboard
-              </Typography>
-            </div>
-          )}
-        </div>
-        <div className="flex items-center flex-1 w-full">
-          <HeaderMenu />
-        </div>
-      </div>
-      <div className="flex" style={{ height: `calc(100vh - ${height}px)` }}>
-        <List
-          sx={{
-            width: isExpanded ? expandedWidth : collapsedWidth,
-            transition: 'width 0.3s',
-            overflowX: 'hidden',
-            bgcolor: "background.paper"
-          }}
-          component="nav"
-          aria-labelledby="nested-list-subheader"
-        >
-          {renderListItem(<SendIcon />, "Sent mail")}
-          {renderListItem(<DraftsIcon />, "Drafts")}
-          <Tooltip title="Inbox" placement="right" disableHoverListener={isExpanded}>
-            <ListItemButton onClick={handleClick}>
-              <ListItemIcon>
-                <InboxIcon />
-              </ListItemIcon>
-              {isExpanded && (
-                <>
-                  <ListItemText primary="Inbox" />
-                  {open ? <ExpandLess /> : <ExpandMore />}
-                </>
-              )}
-            </ListItemButton>
-          </Tooltip>
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <List component="div" disablePadding>
-              <Tooltip title="Starred" placement="right" disableHoverListener={isExpanded}>
-                <ListItemButton sx={{ pl: isExpanded ? 4 : 2 }}>
-                  <ListItemIcon>
-                    <StarBorder />
-                  </ListItemIcon>
-                  {isExpanded && <ListItemText primary="Starred" />}
-                </ListItemButton>
-              </Tooltip>
-            </List>
-          </Collapse>
-        </List>
-        <div className="bg-slate-400 text-center items-center justify-center flex flex-1">
-          Content
-        </div>
+    <div className="flex h-screen">
+      {/* Sidebar */}
+      <Sidebar
+        menuItems={menuItems}
+        isExpanded={isExpanded}
+        onToggle={handleSidebarToggle}
+      />
+
+      {/* Main content area */}
+      <div className="flex flex-col flex-1">
+        {/* Header */}
+        <header className="bg-white shadow-md" style={{ height: "52px" }}>
+          <div className="flex items-center h-full">
+            <HeaderMenu />
+          </div>
+        </header>
+
+        {/* Content */}
+        <main className="flex-1 bg-slate-100 p-4">
+          <Outlet />
+        </main>
       </div>
     </div>
   );
